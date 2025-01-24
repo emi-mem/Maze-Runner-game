@@ -10,9 +10,12 @@ public class Explorer {
         this.y = startY;
     }
 
-    public void moveEast() {
-        if (!maze.isWall(x + 1, y)) {
-            x++;
+    public void moveIfPossible() {
+        // Try moving East, then South, then West, then North
+        if (y < maze.getSize() - 1 && !maze.isWall(x, y + 1)) {
+            y++; // Move East
+        } else if (x < maze.getSize() - 1 && !maze.isWall(x + 1, y)) {
+            x++; // Move South
         }
     }
 
@@ -21,7 +24,7 @@ public class Explorer {
     }
 
     public boolean canMove() {
-        // Dummy condition to stop moving, implement your logic
-        return x < 9;
+        // Check if the explorer has more moves
+        return x < maze.getSize() - 1 || y < maze.getSize() - 1;
     }
 }
