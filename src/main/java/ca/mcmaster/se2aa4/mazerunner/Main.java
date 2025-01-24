@@ -31,22 +31,16 @@ public class Main {
 
         String inputFile = cmd.getOptionValue("i");
         logger.info("**** Reading the maze from file " + args[0]);
-            
-        try (BufferedReader reader = new BufferedReader(new FileReader(args[0]))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                for (int idx = 0; idx < line.length(); idx++) {
-                    if (line.charAt(idx) == '#') {
-                        System.out.print("WALL ");
-                    } else if (line.charAt(idx) == ' ') {
-                        System.out.print("PASS ");
-                    }
-                }
-                logger.info(System.lineSeparator());
-            }
-        } catch(Exception e) {
-            logger.error("/!\\ An error has occured /!\\");
+        
+        Maze maze = new Maze(inputFile);
+        Explorer explorer = new Explorer(maze, 0, 0); // Starting at position (0,0)
+        Path path = new Path();
+
+        while (explorer.canMove()) {
+            explorer.moveEast();
+            path.addStep(explorer.getCurrentPosition());
         }
+        
         logger.info("**** Computing path");
         logger.info("PATH NOT COMPUTED");
         logger.info("** End of MazeRunner");
