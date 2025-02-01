@@ -9,7 +9,7 @@ public class Explorer {
         this.maze = maze;
         this.x = startX;
         this.y = startY;
-        this.currentDirection = Direction.EAST; // Assuming starting facing East
+        this.currentDirection = startX == 0 ? Direction.EAST : Direction.WEST;
     }
 
     enum Direction {
@@ -24,19 +24,18 @@ public class Explorer {
         }
     }
 
-    public void moveIfPossible() {
-        Direction originalDirection = currentDirection;
-        currentDirection = currentDirection.turnRight(); // Try to turn right first
-        if (!canMove()) {
-            currentDirection = originalDirection; // Reset to original direction and try to move straight
-            if (!canMove()) {
-                currentDirection = currentDirection.turnLeft(); // Turn left and try
-                if (!canMove()) {
-                    currentDirection = currentDirection.turnLeft(); // Turn back (180 degrees)
-                }
-            }
+    public boolean canMove() {
+        switch (currentDirection) {
+            case NORTH:
+                return y > 0 && !maze.isWall(x, y - 1);
+            case EAST:
+                return x < maze.getWidth() - 1 && !maze.isWall(x + 1, y);
+            case SOUTH:
+                return y < maze.getHeight() - 1 && !maze.isWall(x, y + 1);
+            case WEST:
+                return x > 0 && !maze.isWall(x - 1, y);
         }
-        move();
+        return false;
     }
 
     private void move() {
@@ -56,21 +55,48 @@ public class Explorer {
         }
     }
 
-    public boolean canMove() {
-        switch (currentDirection) {
-            case NORTH:
-                return y > 0 && !maze.isWall(x, y - 1);
-            case EAST:
-                return x < maze.getWidth() - 1 && !maze.isWall(x + 1, y);
-            case SOUTH:
-                return y < maze.getHeight() - 1 && !maze.isWall(x, y + 1);
-            case WEST:
-                return x > 0 && !maze.isWall(x - 1, y);
-        }
-        return false;
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
     }
 
     public String getCurrentPosition() {
         return "(" + x + ", " + y + ")";
+    }
+
+    public boolean moveStep(Path path) {
+        Direction originalDirection = currentDirection;
+        currentDirection = originalDirection.turnRight();
+        if (canMove()) {
+            move();
+            path.addStep("R");
+            path.addStep("F");
+            return true;
+        }
+        currentDirection = originalDirection;
+        if (canMove()) {
+            move();
+            path.addStep("F");
+            return true;
+        }
+        currentDirection = originalDirection.turnLeft();
+        if (canMove()) {
+            move();
+            path.addStep("L");
+            path.addStep("F");
+            return true;
+        }
+        currentDirection = originalDirection.turnRight().turnRight();
+        if (canMove()) {
+            move();
+            path.addStep("R");
+            path.addStep("R");
+            path.addStep("F");
+            return true;
+        }
+        return false;
     }
 }

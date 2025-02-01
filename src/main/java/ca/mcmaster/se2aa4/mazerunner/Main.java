@@ -1,7 +1,9 @@
 package ca.mcmaster.se2aa4.mazerunner;
+
 import org.apache.commons.cli.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import java.io.IOException;
 
 public class Main {
     private static final Logger logger = LogManager.getLogger();
@@ -13,7 +15,7 @@ public class Main {
         options.addOption("i", true, "Input maze file");
 
         CommandLineParser parser = new DefaultParser();
-        CommandLine cmd = null;
+        CommandLine cmd;
 
         try {
             cmd = parser.parse(options, args);
@@ -28,22 +30,34 @@ public class Main {
         }
 
         String inputFile = cmd.getOptionValue("i");
-        Maze maze = new Maze(inputFile);
-        Explorer explorer = new Explorer(maze, 0, 0); // Assuming entry point (0,0) is correct
-        Path path = new Path();
-
-        // Navigate the maze using the right-hand rule
-        while (explorer.canMove()) {
-            explorer.moveIfPossible();
-            path.addStep(explorer.getCurrentPosition());
+        Maze maze;
+        try {
+            maze = new Maze(inputFile);
+        } catch (IOException e) {
+            logger.error("Error loading maze: " + e.getMessage());
+            return;
         }
 
-        // Output the path in canonical and factorized form
+        int startY = maze.getEntryY();
+        if (startY == -1) {
+            logger.error("No entry found on the west border.");
+            return;
+        }
+
+        Explorer explorer = new Explorer(maze, 0, startY);
+        Path path = new Path();
+
+        // Ensuring the explorer can exit the loop by reaching the east border or handling being stuck
+        while (explorer.getX() < maze.getWidth() - 1) {
+            if (!explorer.moveStep(path)) {
+                logger.error("Explorer is stuck. No further moves possible.");
+                break;
+            }
+        }
+
         logger.info("**** Computing path");
-        String canonicalPath = path.getCanonicalPath();
-        String factorizedPath = path.getFactorizedPath();
-        logger.info("Canonical Path: " + canonicalPath);
-        logger.info("Factorized Path: " + factorizedPath);
+        logger.info("Canonical Path: " + path.getCanonicalPath());
+        logger.info("Factorized Path: " + path.getFactorizedPath());
         logger.info("** End of MazeRunner");
     }
 }

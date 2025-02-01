@@ -8,56 +8,36 @@ import java.util.List;
 
 public class Maze {
     private boolean[][] walls;
-    private int width, height; // Variables for storing the maze's dimensions
-    private int entryX, exitX; // Coordinates for entry and exit points
+    private int width, height;
 
-    public Maze(String filename) {
-        try {
-            loadMaze(filename);
-        } catch (IOException e) {
-            System.err.println("Error loading the maze: " + e.getMessage());
-        }
+    public Maze(String filename) throws IOException {
+        loadMaze(filename);
     }
 
     private void loadMaze(String filename) throws IOException {
-        BufferedReader reader = new BufferedReader(new FileReader(filename));
         List<String> lines = new ArrayList<>();
-        String line; 
-
-        while ((line = reader.readLine()) != null) {
-            lines.add(line);
+        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                lines.add(line);
+            }
         }
-
         height = lines.size();
-        width = lines.get(0).length();
+        width = lines.stream().mapToInt(String::length).max().orElseThrow(() -> new IOException("Failed to determine the maze width."));
         walls = new boolean[height][width];
-
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                walls[i][j] = (lines.get(i).charAt(j) == '#');
+        for (int y = 0; y < height; y++) {
+            String currentLine = lines.get(y);
+            for (int x = 0; x < currentLine.length(); x++) {
+                walls[y][x] = (currentLine.charAt(x) == '#');
             }
-        }
-        findEntryAndExit();
-    }
-
-    private void findEntryAndExit() {
-        // Find the first and last open space in the first and last columns for entry and exit
-        for (int i = 0; i < height; i++) {
-            if (!walls[i][0]) { // Check for an open space for the entry point
-                entryX = i;
-                break;
-            }
-        }
-        for (int i = 0; i < height; i++) {
-            if (!walls[i][width - 1]) { // Check for an open space for the exit point
-                exitX = i;
-                break;
+            for (int x = currentLine.length(); x < width; x++) {
+                walls[y][x] = true; // Pad the rest of the row with walls
             }
         }
     }
 
     public boolean isWall(int x, int y) {
-        return walls[x][y];
+        return walls[y][x];
     }
 
     public int getWidth() {
@@ -68,11 +48,12 @@ public class Maze {
         return height;
     }
 
-    public int getEntryX() {
-        return entryX;
-    }
-
-    public int getExitX() {
-        return exitX;
+    public int getEntryY() {
+        for (int y = 0; y < height; y++) {
+            if (!isWall(0, y)) {
+                return y;
+            }
+        }
+        return -1; // Indicates error
     }
 }

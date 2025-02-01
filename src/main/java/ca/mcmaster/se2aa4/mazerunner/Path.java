@@ -4,60 +4,46 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Path {
-    // A list that will store each step of the path taken by the explorer as a string
-    private List<String> steps = new ArrayList<>();
+    private List<String> steps;
 
-    // Method to add a step to the path
-    // Each step is represented as a string, typically indicating a position in the maze
-    public void addStep(String step) {
-        steps.add(step);  // Add the new step to the end of the list of steps
+    public Path() {
+        steps = new ArrayList<>();
     }
 
-    // Method to retrieve the entire path taken as a single string
-    // for displaying the path or for logging purposes
-    public String getPath() {
-        // Join all steps in the list with a comma and space for easy readability
-        return String.join(", ", steps);
+    public void addStep(String step) {
+        steps.add(step);
     }
 
     public String getCanonicalPath() {
-        StringBuilder builder = new StringBuilder();
-        for (String step: steps) {
-            builder.append(step).append(" ");
-        }
-        return builder.toString().trim();       //trims extra space
+        return String.join(" ", steps);
     }
 
     public String getFactorizedPath() {
-        if (steps.isEmpty()) return "";
-
-        StringBuilder builder = new StringBuilder();
-        String lastStep = steps.get(0);
+        if (steps.isEmpty()) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        String last = steps.get(0);
         int count = 1;
-
-        for (int i= 1; i < steps.size(); i++) {
-            String currentStep = steps.get(i);
-            if (currentStep.equals(lastStep)) {
+        for (int i = 1; i < steps.size(); i++) {
+            String current = steps.get(i);
+            if (current.equals(last)) {
                 count++;
-            } 
-            else {
+            } else {
                 if (count > 1) {
-                    builder.append(count).append(lastStep).append( " ");
+                    sb.append(count).append(last);
                 } else {
-                    builder.append(lastStep).append(" ");
+                    sb.append(last);
                 }
-                lastStep = currentStep;
+                last = current;
                 count = 1;
             }
         }
         if (count > 1) {
-            builder.append(count).append(lastStep);
+            sb.append(count).append(last);
+        } else {
+            sb.append(last);
         }
-        else {
-            builder.append(lastStep);
-        }
-
-        return builder.toString().trim();
+        return sb.toString().trim();
     }
- }
-
+}
