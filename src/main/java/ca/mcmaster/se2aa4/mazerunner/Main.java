@@ -56,8 +56,8 @@ public class Main {
         }
 
         logger.info("**** Computing path");
-        logger.info("Canonical Path: " + path.getCanonicalPath());
-        logger.info("Factorized Path: " + path.getFactorizedPath());
+        System.out.println("Canonical Path: " + path.getCanonicalPath());
+        System.out.println("Factorized Path: " + path.getFactorizedPath());
         logger.info("** End of MazeRunner");
     }
 }
