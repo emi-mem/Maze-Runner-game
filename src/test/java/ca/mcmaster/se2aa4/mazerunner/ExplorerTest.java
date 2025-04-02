@@ -1,12 +1,12 @@
 package ca.mcmaster.se2aa4.mazerunner;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ca.mcmaster.se2aa4.mazerunner.Explorer;
-import ca.mcmaster.se2aa4.mazerunner.Maze;
-import ca.mcmaster.se2aa4.mazerunner.Path;
-import java.io.IOException;
 
 public class ExplorerTest {
     private Maze maze;
@@ -39,7 +39,7 @@ public class ExplorerTest {
         int initialX = explorer.getX();
         int initialY = explorer.getY();
         // Call moveStep passing in the path for recording moves.
-        boolean moved = explorer.moveStep(path);
+        boolean moved = explorer.moveStep();
         assertTrue(moved, "Explorer should be able to move");
         // Expect that the explorer's position changes (for a straight maze, typically moving east).
         assertTrue(explorer.getX() > initialX || explorer.getY() != initialY, "Explorer position should change after moveStep");
@@ -50,7 +50,7 @@ public class ExplorerTest {
         // Continue moving until the explorer reaches the east border or a move fails.
         int moves = 0;
         while (explorer.getX() < maze.getWidth() - 1 && moves < 50) {
-            boolean moved = explorer.moveStep(path);
+            boolean moved = explorer.moveStep();
             if (!moved) break;
             moves++;
         }

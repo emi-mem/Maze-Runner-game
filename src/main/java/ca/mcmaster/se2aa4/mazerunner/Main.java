@@ -1,9 +1,14 @@
 package ca.mcmaster.se2aa4.mazerunner;
 
-import org.apache.commons.cli.*;
+import java.io.IOException;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import java.io.IOException;
 
 public class Main {
     private static final Logger logger = LogManager.getLogger();
@@ -47,9 +52,11 @@ public class Main {
         Explorer explorer = new Explorer(maze, 0, startY);
         Path path = new Path();
 
-        // Ensuring the explorer can exit the loop by reaching the east border or handling being stuck
+        // Register Path as an observer of Explorer.
+        explorer.addObserver(path);
+
         while (explorer.getX() < maze.getWidth() - 1) {
-            if (!explorer.moveStep(path)) {
+            if (!explorer.moveStep()) {
                 logger.error("Explorer is stuck. No further moves possible.");
                 break;
             }
