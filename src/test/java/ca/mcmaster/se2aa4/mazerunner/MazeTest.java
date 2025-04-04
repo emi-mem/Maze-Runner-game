@@ -9,14 +9,12 @@ import static org.junit.jupiter.api.Assertions.fail;
 import org.junit.jupiter.api.Test;
 
 public class MazeTest {
-    // Adjust the file path as needed for your test resources.
     private final String testMazeFilePath = "src/test/resources/straight.maz.txt";
 
     @Test
     public void testMazeDimensions() {
         try {
             Maze maze = new Maze(testMazeFilePath);
-            // Assuming the straight maze is 5 columns wide and 5 rows high.
             assertEquals(5, maze.getWidth(), "Maze width should be 5");
             assertEquals(5, maze.getHeight(), "Maze height should be 5");
         } catch (IOException e) {

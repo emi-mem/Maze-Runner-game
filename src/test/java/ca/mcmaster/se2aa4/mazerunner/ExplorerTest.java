@@ -12,7 +12,6 @@ public class ExplorerTest {
     private Maze maze;
     private Explorer explorer;
     private Path path;
-    // Path to the test maze file (ensure this file exists and is correctly formatted)
     private final String testMazeFilePath = "src/test/resources/straight.maz.txt";
 
     @BeforeEach
@@ -41,7 +40,7 @@ public class ExplorerTest {
         // Call moveStep passing in the path for recording moves.
         boolean moved = explorer.moveStep();
         assertTrue(moved, "Explorer should be able to move");
-        // Expect that the explorer's position changes (for a straight maze, typically moving east).
+        // The explorer's position should change
         assertTrue(explorer.getX() > initialX || explorer.getY() != initialY, "Explorer position should change after moveStep");
     }
     
@@ -54,7 +53,7 @@ public class ExplorerTest {
             if (!moved) break;
             moves++;
         }
-        // For a straight maze, the explorer should reach the east border.
+        // The explorer should reach the east border.
         assertEquals(maze.getWidth() - 1, explorer.getX(), "Explorer should reach the east border");
     }
 }
