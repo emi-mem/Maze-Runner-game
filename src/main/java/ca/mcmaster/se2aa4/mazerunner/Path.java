@@ -10,7 +10,6 @@ public class Path implements ExplorerObserver {
         steps = new ArrayList<>();
     }
 
-    // This method will be called when the Explorer notifies observers.
     @Override
     public void onMove(String step) {
         addStep(step);

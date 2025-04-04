@@ -3,11 +3,7 @@ package ca.mcmaster.se2aa4.mazerunner;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * The Explorer navigates the maze.
- * This version combines the Observer pattern (to notify move events) 
- * with the Command pattern (to encapsulate movement actions).
- */
+
 public class Explorer {
     private int x, y; // Coordinates of the explorer in the maze
     private final Maze maze; // The maze the explorer is navigating
@@ -15,9 +11,7 @@ public class Explorer {
     // List to store observers that want to be notified of moves.
     private List<ExplorerObserver> observers = new ArrayList<>();
 
-    /**
-     * Enum to define all possible directions with methods to change directions.
-     */
+
     public enum Direction {
         NORTH, EAST, SOUTH, WEST;
 
@@ -32,12 +26,6 @@ public class Explorer {
         }
     }
 
-    /**
-     * Initializes the explorer with a starting position and direction.
-     * @param maze The maze to navigate.
-     * @param startX Starting x-coordinate.
-     * @param startY Starting y-coordinate.
-     */
     public Explorer(Maze maze, int startX, int startY) {
         this.maze = maze;
         this.x = startX;
@@ -46,28 +34,18 @@ public class Explorer {
         this.currentDirection = startX == 0 ? Direction.EAST : Direction.WEST;
     }
 
-    /**
-     * Adds an observer that will be notified of move events.
-     * @param observer The observer to add.
-     */
     public void addObserver(ExplorerObserver observer) {
         observers.add(observer);
     }
 
-    /**
-     * Notifies all registered observers of a move event.
-     * @param step A string representing the move (e.g., "R", "F").
-     */
+    
     private void notifyObservers(String step) {
         for (ExplorerObserver observer : observers) {
             observer.onMove(step);
         }
     }
 
-    /**
-     * Checks if movement in the current direction is possible (i.e. no wall in the way).
-     * @return true if move is possible; false otherwise.
-     */
+    
     public boolean canMove() {
         switch (currentDirection) {
             case NORTH:
@@ -82,10 +60,7 @@ public class Explorer {
         return false;
     }
 
-    /**
-     * Moves the explorer one step in the current direction.
-     * (This method is package-private so command classes can use it.)
-     */
+    
     void move() {
         switch (currentDirection) {
             case NORTH:
@@ -103,11 +78,7 @@ public class Explorer {
         }
     }
 
-    /**
-     * A built-in moveStep method that uses internal logic (and not commands)
-     * to decide on a move and notifies observers accordingly.
-     * @return true if a move was made; false if stuck.
-     */
+    
     public boolean moveStep() {
         Direction originalDirection = currentDirection;
 
@@ -151,10 +122,7 @@ public class Explorer {
         return false;
     }
 
-    /**
-     * Executes a movement command (from the Command pattern) and notifies observers.
-     * @param command The movement command to execute.
-     */
+    
     public void executeCommand(MovementCommand command) {
         // Execute the command; the command returns a string representing the move.
         String moveCode = command.execute(this);
@@ -180,10 +148,7 @@ public class Explorer {
         this.currentDirection = newDirection;
     }
 
-    /**
-     * Returns the current position formatted as "(x, y)".
-     * @return The current position string.
-     */
+    
     public String getCurrentPosition() {
         return "(" + x + ", " + y + ")";
     }
