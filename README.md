@@ -1,6 +1,6 @@
 # Maze Runner
 
-## Business Logic Specification
+## Business Logic Specification 
 
 This program explores a maze, finding a path from an entry point to an exit one.
 
